@@ -1,9 +1,9 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup
 from telegram.ext import *
 from constants import *
+from api_key import API_KEY  # this file is not committed because it contains the private token for the bot
 from datetime import datetime
 
-print('**Bot started')
 
 
 
@@ -194,5 +194,9 @@ def main():
     updater.idle()
 
 
+
+
+
+print('**Bot started')
 trans = transaction_info()
 main()
