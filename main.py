@@ -29,6 +29,21 @@ class transaction_info():
     AMOUNT_FLAG = False
 
 
+    def reset(self):
+        time = ""
+        amount = 0
+        method = 0
+        category = 0
+        note = ""
+        PAYMENT_FLAG = False
+        EXPENSE_FLAG = False
+        TIME_FLAG = False
+        METHOD_FLAG = False
+        CATEGORY_FLAG = False
+        NOTE_FLAG = False
+        AMOUNT_FLAG = False
+
+
 
 
 
@@ -124,8 +139,8 @@ def handle_message(update, context):
 
 
 def print_transInfo(update, context):
-    update.message.reply_text("The transaction collected data is:\n  Date:"+str(trans.time)+"\n  Amount: "+str(trans.amount)+"\n  Category: "+str(trans.category)+"\n  Method: "+str(trans.method)+"\n  Notes: "+str(trans.note))
-
+    update.message.reply_text("The transaction collected data is:\n  Date:"+ trans.time +"\n  Amount: "+str(trans.amount)+"\n  Category: "+str(trans.category)+"\n  Method: "+str(trans.method)+"\n  Notes: "+str(trans.note))
+    print("print info msg")
 
 
 
@@ -137,7 +152,7 @@ def queryHandler(update, context):
         # check for category
         for i in len(trans.category_ary):
             if trans.category_ary[i] in query:
-                trans.trans_category = i
+                trans.category = i
                 trans.CATEGORY_FLAG = False
                 return
 
@@ -145,7 +160,7 @@ def queryHandler(update, context):
         # check for methodology
         for i in len(trans.methods_ary):
             if trans.methods_ary[i] in query:
-                trans.trans_method = i
+                trans.method = i
                 trans.METHOD_FLAG = False
                 return
 
@@ -153,19 +168,34 @@ def queryHandler(update, context):
         # check for time
         if 'current_time' in query:
             now = datetime.now()
-            trans.trans_time = now.strftime("%y/%m/%d")
+            trans.time = now.strftime("%y/%m/%d")
             trans.TIME_FLAG = False
+            print(trans.time)
             return
         
         if 'insert_time' in query:
             update.message.reply_text("Insert the date")
-            trans.trans_time = now.strftime("%y/%m/%d")
+            trans.time = now.strftime("%y/%m/%d")
             trans.TIME_FLAG = False
             return
 
     return "No callbacks found"
 
     
+def digits_keyboard(flag, context, update):
+
+    if flag == 0:
+        buttons = [[KeyboardButton("1")],[KeyboardButton("1")],[KeyboardButton("1")],]
+
+
+    elif flag == 1:
+        dummy = 0
+
+
+    context.bot.send_message(chat_id=update.effective_chat.id, text = "Select the field to fill", reply_markup=ReplyKeyboardMarkup(buttons))
+
+
+
 
 
 
