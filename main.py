@@ -1,47 +1,53 @@
+from inspect import trace
+import tracemalloc
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup
 from telegram.ext import *
 from constants import *
 from api_key import API_KEY  # this file is not committed because it contains the private token for the bot
 from datetime import datetime
+from csvManager import *
+from traceManager import TraceManager
 
 
 
 
 # CLASS THAT CONTAINS ALL THE INFO ABOUT THE TRANSACTION
-class transaction_info():
+class Transaction():
 
-    time = ""
-    amount = 0
-    method = 0
+    time     = ""
+    amount   = 0
+    type     = 0
+    method   = 0
     category = 0
-    note = ""
+    note     = ""
 
-    category_ary = ['food', 'travel', 'sport', 'living']
-    methods_ary  = ['cash', 'pp_card', 'cc_card', 'paypal']
+    category_ary = ['Rent','Groceries', 'Living', 'Transport', 'Sport', 'Living']
+    methods_ary  = ['Cash', 'PayPal', 'PP card', 'CC card']
 
     # FLAGS
-    PAYMENT_FLAG = False
-    EXPENSE_FLAG = False
-    TIME_FLAG = False
-    METHOD_FLAG = False
+    ENTRY_FLAG  = False
+    EXPENSE_FLAG  = False
+    TIME_FLAG     = False
+    METHOD_FLAG   = False
     CATEGORY_FLAG = False
-    NOTE_FLAG = False
-    AMOUNT_FLAG = False
+    NOTE_FLAG     = False
+    AMOUNT_FLAG   = False
 
 
     def reset(self):
-        time = ""
-        amount = 0
-        method = 0
+        time     = ""
+        amount   = 0
+        type     = 0
+        method   = 0
         category = 0
-        note = ""
-        PAYMENT_FLAG = False
-        EXPENSE_FLAG = False
-        TIME_FLAG = False
-        METHOD_FLAG = False
+        note     = ""
+        PAYMENT_FLAG  = False
+        EXPENSE_FLAG  = False
+        TIME_FLAG     = False
+        METHOD_FLAG   = False
         CATEGORY_FLAG = False
-        NOTE_FLAG = False
-        AMOUNT_FLAG = False
+        NOTE_FLAG     = False
+        AMOUNT_FLAG   = False
 
 
 
@@ -50,6 +56,7 @@ class transaction_info():
 
 
 def new_command(update, context):
+    traceManager.addLine("New transaction have been initialized \n")
     button = [[KeyboardButton(txt_transaction)]]
     context.bot.send_message(chat_id=update.effective_chat.id, text= "Generate new transaction", 
                              reply_markup=ReplyKeyboardMarkup(button, resize_keyboard=True, one_time_keyboard=True))
@@ -62,31 +69,35 @@ def new_command(update, context):
 
 def handle_message(update, context):
 
-    # EXPENSE / PAYMENT BUTTON
+    # EXPENSE / ENTRY BUTTON
     if txt_transaction in update.message.text:
-        buttons = [[KeyboardButton(txt_expense)], [KeyboardButton(txt_payment)]]
+        buttons = [[KeyboardButton(txt_expense)], [KeyboardButton(txt_entry)]]
         context.bot.send_message(chat_id=update.effective_chat.id, text = "Which type of transaction is it?", reply_markup=ReplyKeyboardMarkup(buttons, resize_keyboard=True, one_time_keyboard=True))
 
 
     # FIELDS TO FILL BUTTONS
-    if txt_expense in update.message.text or txt_payment in update.message.text:
+    if txt_expense in update.message.text or txt_entry in update.message.text:
 
         buttons = [[KeyboardButton(txt_date)],
-                [KeyboardButton(txt_amount)], 
-                [KeyboardButton(txt_category)], 
-                [KeyboardButton(txt_method)],
-                [KeyboardButton(txt_note)],
-                [KeyboardButton(txt_complete)]]
+                   [KeyboardButton(txt_amount)], 
+                   [KeyboardButton(txt_category)], 
+                   [KeyboardButton(txt_method)],
+                   [KeyboardButton(txt_note)],
+                   [KeyboardButton(txt_complete)]]
 
         if txt_expense in update.message.text:
+            trans.type = 0
             trans.EXPENSE_FLAG = True
-        if txt_payment in update.message.text:
-            trans.PAYMENT_FLAG = True
+            traceManager.addLine("New type inserted: expense - " + str(trans.type) + '\n')
+        if txt_entry in update.message.text:
+            trans.type = 1
+            trans.ENTRY_FLAG = True
+            traceManager.addLine("New type inserted: entry - " + str(trans.type) + '\n')
 
         context.bot.send_message(chat_id=update.effective_chat.id, text = "Select the field to fill", reply_markup=ReplyKeyboardMarkup(buttons))
 
 
-    # INLINE BUTTONS
+    ## INLINE BUTTONS
 
     #TIME
     if txt_date in update.message.text:
@@ -104,20 +115,23 @@ def handle_message(update, context):
     # CATEGORY
     if txt_category in update.message.text:
         trans.CATEGORY_FLAG = True
-        buttons = [[InlineKeyboardButton("🍕 Food",    callback_data = trans.category_ary[0])], 
-                   [InlineKeyboardButton("✈️ Travel", callback_data = trans.category_ary[1])], 
-                   [InlineKeyboardButton("🧗 Sport",  callback_data = trans.category_ary[2])], 
-                   [InlineKeyboardButton("🏠 Living", callback_data = trans.category_ary[3])]]
+        buttons = [
+                   [InlineKeyboardButton("🏠 Rent",    callback_data = trans.category_ary[0])], 
+                   [InlineKeyboardButton("🍕 Groceries",    callback_data = trans.category_ary[1])], 
+                   [InlineKeyboardButton("🧻 Living", callback_data = trans.category_ary[2])], 
+                   [InlineKeyboardButton("✈️ Transport",  callback_data = trans.category_ary[3])], 
+                   [InlineKeyboardButton("🧗 Sport", callback_data = trans.category_ary[4])],
+                   [InlineKeyboardButton("🎁 Other",  callback_data = trans.category_ary[5])] ]
         update.message.reply_text("Define the category:", reply_markup=InlineKeyboardMarkup(buttons))
 
 
     # METHOD
     if txt_method in update.message.text:
         trans.METHOD_FLAG = True
-        buttons = [[InlineKeyboardButton("💶 Cash",    callback_data = trans.methods_ary[0])], 
-                   [InlineKeyboardButton("💳 PP card", callback_data = trans.methods_ary[1])], 
-                   [InlineKeyboardButton("🏦 CC card", callback_data = trans.methods_ary[2])], 
-                   [InlineKeyboardButton("🌐 PayPal",  callback_data = trans.methods_ary[3])]]
+        buttons = [[InlineKeyboardButton("💶 Cash", callback_data = trans.methods_ary[0])], 
+                   [InlineKeyboardButton("🌐 PayPal", callback_data = trans.methods_ary[1])], 
+                   [InlineKeyboardButton("💳 PP card", callback_data = trans.methods_ary[2])], 
+                   [InlineKeyboardButton("🏦 CC card", callback_data = trans.methods_ary[3])]]
         update.message.reply_text("Define payment method:", reply_markup=InlineKeyboardMarkup(buttons))
 
 
@@ -134,49 +148,71 @@ def handle_message(update, context):
 
         print_transInfo(update, context)
 
+        csvManager.addLineCSV(update, traceManager, trans)
+
     return "Sorry I cannot understand your command"
 
 
 
-def print_transInfo(update, context):
-    update.message.reply_text("The transaction collected data is:\n  Date:"+ trans.time +"\n  Amount: "+str(trans.amount)+"\n  Category: "+str(trans.category)+"\n  Method: "+str(trans.method)+"\n  Notes: "+str(trans.note))
-    print("print info msg")
-
-
-
-def queryHandler(update, context):
+def queryReceivedHandler(update, context):
     query = update.callback_query.data
     update.callback_query.answer()
 
-    if trans.CATEGORY_FLAG:
-        # check for category
-        for i in len(trans.category_ary):
-            if trans.category_ary[i] in query:
-                trans.category = i
-                trans.CATEGORY_FLAG = False
-                return
-
-    if trans.METHOD_FLAG:
-        # check for methodology
-        for i in len(trans.methods_ary):
-            if trans.methods_ary[i] in query:
-                trans.method = i
-                trans.METHOD_FLAG = False
-                return
-
     if trans.TIME_FLAG:
-        # check for time
         if 'current_time' in query:
             now = datetime.now()
-            trans.time = now.strftime("%y/%m/%d")
+            trans.time = now.strftime("%Y-%m-%d")
             trans.TIME_FLAG = False
             print(trans.time)
+            traceManager.addLine("New date inserted: " + trans.time + '\n')
             return
         
         if 'insert_time' in query:
             update.message.reply_text("Insert the date")
-            trans.time = now.strftime("%y/%m/%d")
+            trans.time = now.strftime("%Y-%m-%d")
             trans.TIME_FLAG = False
+            print(trans.time)
+            traceManager.addLine("New date inserted manually: " + trans.time + '\n')
+            return
+
+    if trans.AMOUNT_FLAG:      
+        if 'qualcosa' in query:
+            trans.amount = 0
+            trans.AMOUNT_FLAG = False
+            print(str(trans.amount))
+            traceManager.addLine("New amount inserted: " + str(trans.amount) + '\n')
+            return
+
+    if trans.CATEGORY_FLAG:
+        cnt = 0
+        for cat in trans.category_ary:
+            if trans.category_ary[cnt] in query:
+                trans.category = cnt
+                trans.CATEGORY_FLAG = False
+                debug = trans.category_ary[trans.category] + " - " +  str(trans.category)
+                print(debug)
+                traceManager.addLine("New category inserted: " + debug + '\n')
+                return
+            cnt = cnt+1
+
+    if trans.METHOD_FLAG:
+        cnt = 0
+        for meth in trans.methods_ary:
+            if trans.methods_ary[cnt] in query:
+                trans.method = cnt
+                trans.METHOD_FLAG = False
+                debug = trans.methods_ary[trans.method] + " - " + str(trans.method)
+                print(debug)
+                traceManager.addLine("New method inserted: " + debug + '\n')
+                return
+            cnt = cnt+1
+
+    if trans.NOTE_FLAG:      
+        if 'qualcosa' in query:
+            trans.note = 0
+            trans.NOTE_FLAG = False
+            print(trans.note)
+            traceManager.addLine("New note inserted: " + trans.note + '\n')
             return
 
     return "No callbacks found"
@@ -195,6 +231,10 @@ def digits_keyboard(flag, context, update):
     context.bot.send_message(chat_id=update.effective_chat.id, text = "Select the field to fill", reply_markup=ReplyKeyboardMarkup(buttons))
 
 
+def print_transInfo(update, context):
+    update.message.reply_text("The transaction collected data is:\n  Date:"+ trans.time +"\n  Amount: "+str(trans.amount)+"\n  Category: "+str(trans.category_ary[trans.category])+"\n  Method: "+str(trans.methods_ary[trans.method])+"\n  Notes: "+str(trans.note))
+    print("print info msg")
+
 
 
 
@@ -206,7 +246,25 @@ def error(update, context):
 
 
 
+
+
+
+
+##################################################
+#       __  __    _    ___ _   _ 
+#      |  \/  |  / \  |_ _| \ | |
+#      | |\/| | / _ \  | ||  \| |
+#      | |  | |/ ___ \ | || |\  |
+#      |_|  |_/_/   \_\___|_| \_|
+                           
+
+
 def main():
+
+    pollingWaitTime = 0.5
+
+    traceManager.addLine("** Bot started ** \n")
+    traceManager.addLine("Polling wait time is: " + str(pollingWaitTime) + '\n')
 
 
     updater = Updater(API_KEY, use_context=True)
@@ -216,17 +274,18 @@ def main():
 
     dp.add_handler(MessageHandler(Filters.text, handle_message))
 
-    dp.add_handler(CallbackQueryHandler(queryHandler))
+    dp.add_handler(CallbackQueryHandler(queryReceivedHandler))
 
     dp.add_error_handler(error)
 
-    updater.start_polling(2)
+    updater.start_polling(pollingWaitTime)
     updater.idle()
 
 
 
 
-
 print('**Bot started')
-trans = transaction_info()
+trans        = Transaction()
+traceManager = TraceManager()
+csvManager   = CSVManager()
 main()

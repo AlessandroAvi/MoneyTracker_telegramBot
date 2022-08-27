@@ -1,0 +1,62 @@
+2022-08-27 16-36-36** Bot started ** 
+2022-08-27 16-37-00** Bot started ** 
+2022-08-27 16-37-00Polling wait time is: 0.5
+2022-08-27 16-37-04New transaction have been initialized 
+2022-08-27 16-37-07New type inserted: expense - 0
+2022-08-27 16-37-10New date inserted: 2022-08-27
+2022-08-27 16-37-13New category inserted: Sport - 4
+2022-08-27 16-38-23** Bot started ** 
+2022-08-27 16-38-23Polling wait time is: 0.5
+2022-08-27 16-38-26New transaction have been initialized 
+2022-08-27 16-38-29New type inserted: expense - 0
+2022-08-27 16-38-32New date inserted: 2022-08-27
+2022-08-27 16-39-14** Bot started ** 
+2022-08-27 16-39-14Polling wait time is: 0.5
+2022-08-27 16-39-17New transaction have been initialized 
+2022-08-27 16-39-21New type inserted: expense - 0
+2022-08-27 16-41-00** Bot started ** 
+2022-08-27 16-41-00Polling wait time is: 0.5
+2022-08-27 16-41-03New category inserted: Sport - 4
+2022-08-27 16-41-16New category inserted: Groceries - 1
+2022-08-27 16-42-03** Bot started ** 
+2022-08-27 16-42-03Polling wait time is: 0.5
+2022-08-27 16-42-07New transaction have been initialized 
+2022-08-27 16-42-10New type inserted: expense - 0
+2022-08-27 16-42-13New date inserted: 2022-08-27
+2022-08-27 16-44-03** Bot started ** 
+2022-08-27 16-44-03Polling wait time is: 0.5
+2022-08-27 16-44-08New transaction have been initialized 
+2022-08-27 16-44-11New type inserted: expense - 0
+2022-08-27 16-44-15New category inserted: Rent - 0
+2022-08-27 16-44-19New category inserted: Groceries - 1
+2022-08-27 16-44-22New category inserted: Living - 2
+2022-08-27 16-44-26New date inserted: 2022-08-27
+2022-08-27 16-44-29New category inserted: Living - 2
+2022-08-27 16-44-32New method inserted: PP card - 1
+2022-08-27 16-48-15** Bot started ** 
+2022-08-27 16-48-15Polling wait time is: 0.5
+2022-08-27 16-49-57** Bot started ** 
+2022-08-27 16-49-57Polling wait time is: 0.5
+2022-08-27 16-51-31** Bot started ** 
+2022-08-27 16-51-31Polling wait time is: 0.5
+2022-08-27 16-54-58** Bot started ** 
+2022-08-27 16-54-58Polling wait time is: 0.5
+2022-08-27 16-55-01New data added to CSV: ;0;0;0;
+2022-08-27 16-55-08New transaction have been initialized 
+2022-08-27 16-55-11New type inserted: expense - 0
+2022-08-27 16-55-14New date inserted: 2022-08-27
+2022-08-27 16-55-20New category inserted: Sport - 4
+2022-08-27 16-55-26New data added to CSV: 2022-08-27;0;4;1;
+2022-08-27 16-55-42New category inserted: Living - 2
+2022-08-27 16-55-47New method inserted: PP card - 0
+2022-08-27 16-55-51New method inserted: PP card - 1
+2022-08-27 16-55-54New method inserted: PP card - 2
+2022-08-27 16-55-59New method inserted: PP card - 3
+2022-08-27 16-56-45** Bot started ** 
+2022-08-27 16-56-45Polling wait time is: 0.5
+2022-08-27 16-56-49New transaction have been initialized 
+2022-08-27 16-56-51New type inserted: expense - 0
+2022-08-27 16-56-54New date inserted: 2022-08-27
+2022-08-27 16-56-56New category inserted: Sport - 4
+2022-08-27 16-56-59New method inserted: CC card - 3
+2022-08-27 16-57-01New data added to CSV: 2022-08-27;0;4;3;
