@@ -11,6 +11,8 @@ txt_entry     = "Entry"
 
 
 
+
+
 # PATH
 csvDirPath   = 'C:\\Users\\aless\\Documents\\Projects\\py_code\\BigFishMoneyTracker_bot\\data'
 csvFilePath   = 'C:\\Users\\aless\\Documents\\Projects\\py_code\\BigFishMoneyTracker_bot\\data\\money_database.csv'

@@ -1,6 +1,7 @@
 from inspect import trace
+from operator import truediv
 import tracemalloc
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import *
 from constants import *
 from api_key import API_KEY  # this file is not committed because it contains the private token for the bot
@@ -15,7 +16,8 @@ from traceManager import TraceManager
 class Transaction():
 
     time     = ""
-    amount   = 0
+    amount   = ""
+    amountTemp = ""
     type     = 0
     method   = 0
     category = 0
@@ -23,6 +25,8 @@ class Transaction():
 
     category_ary = ['Rent','Groceries', 'Living', 'Transport', 'Sport', 'Living']
     methods_ary  = ['Cash', 'PayPal', 'PP card', 'CC card']
+    digits_ary   = ['0','1','2','3','4','5','6','7','8','9','.']
+    digit_end    = 'K'
 
     # FLAGS
     ENTRY_FLAG  = False
@@ -36,7 +40,8 @@ class Transaction():
 
     def reset(self):
         time     = ""
-        amount   = 0
+        amount   = ""
+        amountstr = ""
         type     = 0
         method   = 0
         category = 0
@@ -51,10 +56,16 @@ class Transaction():
 
 
 
+buttonsMenu = [[KeyboardButton(txt_date)],
+              [KeyboardButton(txt_amount)], 
+              [KeyboardButton(txt_category)], 
+              [KeyboardButton(txt_method)],
+              [KeyboardButton(txt_note)],
+              [KeyboardButton(txt_complete)]]
 
 
 
-
+# Function is called when user writes /start in chat
 def new_command(update, context):
     traceManager.addLine("New transaction have been initialized \n")
     button = [[KeyboardButton(txt_transaction)]]
@@ -62,11 +73,7 @@ def new_command(update, context):
                              reply_markup=ReplyKeyboardMarkup(button, resize_keyboard=True, one_time_keyboard=True))
 
 
-
-
-
-
-
+# FUnction is called when user activates a new transaction with the button
 def handle_message(update, context):
 
     # EXPENSE / ENTRY BUTTON
@@ -78,12 +85,7 @@ def handle_message(update, context):
     # FIELDS TO FILL BUTTONS
     if txt_expense in update.message.text or txt_entry in update.message.text:
 
-        buttons = [[KeyboardButton(txt_date)],
-                   [KeyboardButton(txt_amount)], 
-                   [KeyboardButton(txt_category)], 
-                   [KeyboardButton(txt_method)],
-                   [KeyboardButton(txt_note)],
-                   [KeyboardButton(txt_complete)]]
+
 
         if txt_expense in update.message.text:
             trans.type = 0
@@ -94,7 +96,7 @@ def handle_message(update, context):
             trans.ENTRY_FLAG = True
             traceManager.addLine("New type inserted: entry - " + str(trans.type) + '\n')
 
-        context.bot.send_message(chat_id=update.effective_chat.id, text = "Select the field to fill", reply_markup=ReplyKeyboardMarkup(buttons))
+        context.bot.send_message(chat_id=update.effective_chat.id, text = "Select the field to fill", reply_markup=ReplyKeyboardMarkup(buttonsMenu))
 
 
     ## INLINE BUTTONS
@@ -109,7 +111,20 @@ def handle_message(update, context):
     # AMOUNT
     if txt_amount in update.message.text:
         trans.AMOUNT_FLAG = True
-        update.message.reply_text("Insert amount of money:")
+        buttons = [
+                    [KeyboardButton("1",    callback_data = "1"),
+                     KeyboardButton("2",    callback_data = "2"),
+                     KeyboardButton("3",    callback_data = "3")],
+                    [KeyboardButton("4",    callback_data = "4"),
+                     KeyboardButton("5",    callback_data = "5"),
+                     KeyboardButton("6",    callback_data = "6")],
+                    [KeyboardButton("7",    callback_data = "7"),
+                     KeyboardButton("8",    callback_data = "8"),
+                     KeyboardButton("9",    callback_data = "9")],
+                    [KeyboardButton(".",    callback_data = "."),
+                     KeyboardButton("0",    callback_data = "0"),
+                     KeyboardButton("K",  callback_data = "K")]]
+        update.message.reply_text("Insert amount of money:", reply_markup=ReplyKeyboardMarkup(buttons))
 
 
     # CATEGORY
@@ -154,6 +169,7 @@ def handle_message(update, context):
 
 
 
+# FUnction is called whenever user writes womething in the chat
 def queryReceivedHandler(update, context):
     query = update.callback_query.data
     update.callback_query.answer()
@@ -175,13 +191,20 @@ def queryReceivedHandler(update, context):
             traceManager.addLine("New date inserted manually: " + trans.time + '\n')
             return
 
-    if trans.AMOUNT_FLAG:      
-        if 'qualcosa' in query:
-            trans.amount = 0
-            trans.AMOUNT_FLAG = False
-            print(str(trans.amount))
-            traceManager.addLine("New amount inserted: " + str(trans.amount) + '\n')
+    if trans.AMOUNT_FLAG:  
+        if 'K' in query:
+            trans.AMOUNT_FLAG = False  
+            trans.amount = trans.amountTemp
+            trans.amountTemp = ""
+            print(trans.amountTemp)
+            traceManager.addLine("New amount inserted manually: " + trans.amountTemp + '\n')  
+            context.bot.send_message(reply_markup=ReplyKeyboardRemove(remove_keyboard=True))
+
             return
+        for digit in trans.digits_ary:
+            if digit in query:
+                trans.amountTemp = trans.amountTemp + digit
+                return
 
     if trans.CATEGORY_FLAG:
         cnt = 0
@@ -208,14 +231,16 @@ def queryReceivedHandler(update, context):
             cnt = cnt+1
 
     if trans.NOTE_FLAG:      
-        if 'qualcosa' in query:
-            trans.note = 0
-            trans.NOTE_FLAG = False
-            print(trans.note)
-            traceManager.addLine("New note inserted: " + trans.note + '\n')
-            return
+        trans.note = query
+        trans.NOTE_FLAG = False
+        print(trans.note)
+        traceManager.addLine("New note inserted: " + trans.note + '\n')
+        return
 
     return "No callbacks found"
+
+
+
 
     
 def digits_keyboard(flag, context, update):
@@ -232,7 +257,7 @@ def digits_keyboard(flag, context, update):
 
 
 def print_transInfo(update, context):
-    update.message.reply_text("The transaction collected data is:\n  Date:"+ trans.time +"\n  Amount: "+str(trans.amount)+"\n  Category: "+str(trans.category_ary[trans.category])+"\n  Method: "+str(trans.methods_ary[trans.method])+"\n  Notes: "+str(trans.note))
+    update.message.reply_text("The transaction collected data is:\n  Date:"+ trans.time +"\n  Amount: "+ trans.amountTemp +"\n  Category: "+str(trans.category_ary[trans.category])+"\n  Method: "+str(trans.methods_ary[trans.method])+"\n  Notes: "+str(trans.note))
     print("print info msg")
 
 

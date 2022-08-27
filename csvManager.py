@@ -14,12 +14,12 @@ class CSVManager():
             file.close()           
         return
 
-        
+
     def addLineCSV(self, update, trace, trans):
 
         csvFile = open(csvFilePath, 'a')
 
-        line = trans.time + ";" + str(trans.amount) + ";" + str(trans.category) + ";" + str(trans.method) + ";" + trans.note + '\n'
+        line = trans.time + ";" + trans.amount + ";" + str(trans.category) + ";" + str(trans.method) + ";" + trans.note + '\n'
 
         csvFile.write(line)
         

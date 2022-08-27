@@ -60,3 +60,54 @@
 2022-08-27 16-56-56New category inserted: Sport - 4
 2022-08-27 16-56-59New method inserted: CC card - 3
 2022-08-27 16-57-01New data added to CSV: 2022-08-27;0;4;3;
+2022-08-27 17-12-28      ** Bot started ** 
+2022-08-27 17-12-28      Polling wait time is: 0.5
+2022-08-27 17-12-32      New transaction have been initialized 
+2022-08-27 17-12-35      New type inserted: expense - 0
+2022-08-27 17-12-37      New date inserted: 2022-08-27
+2022-08-27 17-12-47      New category inserted: Living - 2
+2022-08-27 17-12-51      New method inserted: PP card - 2
+2022-08-27 17-12-53      New data added to CSV: 2022-08-27;0;2;2;
+2022-08-27 17-33-55      ** Bot started ** 
+2022-08-27 17-33-55      Polling wait time is: 0.5
+2022-08-27 17-34-01      New transaction have been initialized 
+2022-08-27 17-34-09      New type inserted: expense - 0
+2022-08-27 17-53-53      ** Bot started ** 
+2022-08-27 17-53-53      Polling wait time is: 0.5
+2022-08-27 17-54-08      New transaction have been initialized 
+2022-08-27 17-54-13      New type inserted: expense - 0
+2022-08-27 17-54-52      ** Bot started ** 
+2022-08-27 17-54-52      Polling wait time is: 0.5
+2022-08-27 17-55-00      New transaction have been initialized 
+2022-08-27 17-55-04      New type inserted: expense - 0
+2022-08-27 17-57-14      ** Bot started ** 
+2022-08-27 17-57-14      Polling wait time is: 0.5
+2022-08-27 17-57-18      New transaction have been initialized 
+2022-08-27 17-57-22      New type inserted: expense - 0
+2022-08-27 17-59-46      ** Bot started ** 
+2022-08-27 17-59-46      Polling wait time is: 0.5
+2022-08-27 18-01-58      ** Bot started ** 
+2022-08-27 18-01-58      Polling wait time is: 0.5
+2022-08-27 18-03-08      ** Bot started ** 
+2022-08-27 18-03-08      Polling wait time is: 0.5
+2022-08-27 18-20-01      ** Bot started ** 
+2022-08-27 18-20-01      Polling wait time is: 0.5
+2022-08-27 18-20-06      New transaction have been initialized 
+2022-08-27 18-20-10      New type inserted: expense - 0
+2022-08-27 18-20-41      New transaction have been initialized 
+2022-08-27 18-20-45      New type inserted: expense - 0
+2022-08-27 18-20-48      New data added to CSV: ;;0;0;
+2022-08-27 18-23-09      ** Bot started ** 
+2022-08-27 18-23-09      Polling wait time is: 0.5
+2022-08-27 18-24-43      ** Bot started ** 
+2022-08-27 18-24-43      Polling wait time is: 0.5
+2022-08-27 18-24-47      New transaction have been initialized 
+2022-08-27 18-24-51      New type inserted: expense - 0
+2022-08-27 18-25-33      ** Bot started ** 
+2022-08-27 18-25-33      Polling wait time is: 0.5
+2022-08-27 18-25-39      New transaction have been initialized 
+2022-08-27 18-25-43      New type inserted: expense - 0
+2022-08-27 18-27-07      ** Bot started ** 
+2022-08-27 18-27-07      Polling wait time is: 0.5
+2022-08-27 18-27-10      New transaction have been initialized 
+2022-08-27 18-27-13      New type inserted: expense - 0
