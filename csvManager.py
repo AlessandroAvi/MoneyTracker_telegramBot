@@ -19,7 +19,7 @@ class CSVManager():
 
         csvFile = open(csvFilePath, 'a')
 
-        line = trans.time + ";" + trans.amount + ";" + str(trans.category) + ";" + str(trans.method) + ";" + trans.note + '\n'
+        line = trans.time + ";" + str(trans.type) + ";" + trans.amount + ";" + str(trans.category) + ";" + str(trans.method) + ";" + trans.note + '\n'
 
         csvFile.write(line)
         

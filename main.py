@@ -85,8 +85,6 @@ def handle_message(update, context):
     # FIELDS TO FILL BUTTONS
     if txt_expense in update.message.text or txt_entry in update.message.text:
 
-
-
         if txt_expense in update.message.text:
             trans.type = 0
             trans.EXPENSE_FLAG = True
@@ -165,11 +163,27 @@ def handle_message(update, context):
 
         csvManager.addLineCSV(update, traceManager, trans)
 
+    # PARSE AMOUNT
+    if trans.AMOUNT_FLAG:  
+        if 'K' in update.message.text:
+            trans.AMOUNT_FLAG = False  
+            trans.amount = trans.amountTemp
+            print(trans.amountTemp)
+            trans.amountTemp = ""
+            traceManager.addLine("New amount inserted manually: " + trans.amountTemp + '\n')  
+            context.bot.send_message(chat_id=update.effective_chat.id, text = "Amount received", reply_markup=ReplyKeyboardRemove(remove_keyboard=True))
+            context.bot.send_message(chat_id=update.effective_chat.id, text = "Select the field to fill", reply_markup=ReplyKeyboardMarkup(buttonsMenu))
+            return
+        for digit in trans.digits_ary:
+            if digit in update.message.text:
+                trans.amountTemp = trans.amountTemp + digit
+                return
+
     return "Sorry I cannot understand your command"
 
 
 
-# FUnction is called whenever user writes womething in the chat
+# Function is called whenever a callback is called from in line buttons
 def queryReceivedHandler(update, context):
     query = update.callback_query.data
     update.callback_query.answer()
@@ -190,21 +204,6 @@ def queryReceivedHandler(update, context):
             print(trans.time)
             traceManager.addLine("New date inserted manually: " + trans.time + '\n')
             return
-
-    if trans.AMOUNT_FLAG:  
-        if 'K' in query:
-            trans.AMOUNT_FLAG = False  
-            trans.amount = trans.amountTemp
-            trans.amountTemp = ""
-            print(trans.amountTemp)
-            traceManager.addLine("New amount inserted manually: " + trans.amountTemp + '\n')  
-            context.bot.send_message(reply_markup=ReplyKeyboardRemove(remove_keyboard=True))
-
-            return
-        for digit in trans.digits_ary:
-            if digit in query:
-                trans.amountTemp = trans.amountTemp + digit
-                return
 
     if trans.CATEGORY_FLAG:
         cnt = 0
@@ -240,29 +239,9 @@ def queryReceivedHandler(update, context):
     return "No callbacks found"
 
 
-
-
-    
-def digits_keyboard(flag, context, update):
-
-    if flag == 0:
-        buttons = [[KeyboardButton("1")],[KeyboardButton("1")],[KeyboardButton("1")],]
-
-
-    elif flag == 1:
-        dummy = 0
-
-
-    context.bot.send_message(chat_id=update.effective_chat.id, text = "Select the field to fill", reply_markup=ReplyKeyboardMarkup(buttons))
-
-
 def print_transInfo(update, context):
     update.message.reply_text("The transaction collected data is:\n  Date:"+ trans.time +"\n  Amount: "+ trans.amountTemp +"\n  Category: "+str(trans.category_ary[trans.category])+"\n  Method: "+str(trans.methods_ary[trans.method])+"\n  Notes: "+str(trans.note))
     print("print info msg")
-
-
-
-
 
 
 def error(update, context):
