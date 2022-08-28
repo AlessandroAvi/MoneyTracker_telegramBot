@@ -15,13 +15,13 @@ from traceManager import TraceManager
 # CLASS THAT CONTAINS ALL THE INFO ABOUT THE TRANSACTION
 class Transaction():
 
-    time     = ""
-    amount   = ""
+    time       = ""
+    amount     = ""
     amountTemp = ""
-    type     = 0
-    method   = 0
-    category = 0
-    note     = ""
+    type       = 0
+    method     = 0
+    category   = 0
+    note       = ""
 
     category_ary = ['Rent','Groceries', 'Living', 'Transport', 'Sport', 'Living']
     methods_ary  = ['Cash', 'PayPal', 'PP card', 'CC card']
@@ -29,7 +29,7 @@ class Transaction():
     digit_end    = 'K'
 
     # FLAGS
-    ENTRY_FLAG  = False
+    ENTRY_FLAG    = False
     EXPENSE_FLAG  = False
     TIME_FLAG     = False
     METHOD_FLAG   = False
@@ -39,13 +39,13 @@ class Transaction():
 
 
     def reset(self):
-        time     = ""
-        amount   = ""
-        amountstr = ""
-        type     = 0
-        method   = 0
-        category = 0
-        note     = ""
+        time       = ""
+        amount     = ""
+        amountTemp = ""
+        type       = 0
+        method     = 0
+        category   = 0
+        note       = ""
         PAYMENT_FLAG  = False
         EXPENSE_FLAG  = False
         TIME_FLAG     = False
@@ -56,31 +56,31 @@ class Transaction():
 
 
 
-buttonsMenu = [[KeyboardButton(txt_date)],
-              [KeyboardButton(txt_amount)], 
-              [KeyboardButton(txt_category)], 
-              [KeyboardButton(txt_method)],
-              [KeyboardButton(txt_note)],
-              [KeyboardButton(txt_complete)]]
+buttonsMenu = [[KeyboardButton(txt_date),
+                KeyboardButton(txt_amount)], 
+               [KeyboardButton(txt_category), 
+                KeyboardButton(txt_method)],
+               [KeyboardButton(txt_note),
+                KeyboardButton(txt_complete)]]
 
 
 
 # Function is called when user writes /start in chat
 def new_command(update, context):
     traceManager.addLine("New transaction have been initialized \n")
+    trans.reset()
     button = [[KeyboardButton(txt_transaction)]]
     context.bot.send_message(chat_id=update.effective_chat.id, text= "Generate new transaction", 
                              reply_markup=ReplyKeyboardMarkup(button, resize_keyboard=True, one_time_keyboard=True))
 
 
-# FUnction is called when user activates a new transaction with the button
+# Function is called when user activates a new transaction with the button
 def handle_message(update, context):
 
     # EXPENSE / ENTRY BUTTON
     if txt_transaction in update.message.text:
-        buttons = [[KeyboardButton(txt_expense)], [KeyboardButton(txt_entry)]]
+        buttons = [[KeyboardButton(txt_expense), KeyboardButton(txt_entry)]]
         context.bot.send_message(chat_id=update.effective_chat.id, text = "Which type of transaction is it?", reply_markup=ReplyKeyboardMarkup(buttons, resize_keyboard=True, one_time_keyboard=True))
-
 
     # FIELDS TO FILL BUTTONS
     if txt_expense in update.message.text or txt_entry in update.message.text:
@@ -98,13 +98,11 @@ def handle_message(update, context):
 
 
     ## INLINE BUTTONS
-
     #TIME
     if txt_date in update.message.text:
         trans.TIME_FLAG = True
         buttons = [[InlineKeyboardButton("Current time", callback_data="current_time")], [InlineKeyboardButton("Insert time", callback_data="insert_time")]]
         update.message.reply_text("Select type of time:", reply_markup=InlineKeyboardMarkup(buttons))
-
 
     # AMOUNT
     if txt_amount in update.message.text:
@@ -121,9 +119,8 @@ def handle_message(update, context):
                      KeyboardButton("9",    callback_data = "9")],
                     [KeyboardButton(".",    callback_data = "."),
                      KeyboardButton("0",    callback_data = "0"),
-                     KeyboardButton("K",  callback_data = "K")]]
+                     KeyboardButton("OK",   callback_data = "OK")]]
         update.message.reply_text("Insert amount of money:", reply_markup=ReplyKeyboardMarkup(buttons))
-
 
     # CATEGORY
     if txt_category in update.message.text:
@@ -137,7 +134,6 @@ def handle_message(update, context):
                    [InlineKeyboardButton("🎁 Other",  callback_data = trans.category_ary[5])] ]
         update.message.reply_text("Define the category:", reply_markup=InlineKeyboardMarkup(buttons))
 
-
     # METHOD
     if txt_method in update.message.text:
         trans.METHOD_FLAG = True
@@ -147,13 +143,11 @@ def handle_message(update, context):
                    [InlineKeyboardButton("🏦 CC card", callback_data = trans.methods_ary[3])]]
         update.message.reply_text("Define payment method:", reply_markup=InlineKeyboardMarkup(buttons))
 
-
     # NOTES
     if txt_note in update.message.text:
         trans.NOTE_FLAG = True
         buttons = [[InlineKeyboardButton(txt_date)], [InlineKeyboardButton(txt_amount)]]
         update.message.reply_text("Insert the note:")
-
 
     # TERMINATE
     if txt_complete in update.message.text:
