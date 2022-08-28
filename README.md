@@ -5,5 +5,5 @@
 
  # UI
 
- <img src="https://github.com/AlessandroAvi/MoneyTracker_telegramBot/blob/main/screenshots/001.jpg" width=20% height=20%> <img src="https://github.com/AlessandroAvi/MoneyTracker_telegramBot/blob/main/screenshots/002.jpg" width=20% height=20%>
+ <img src="https://github.com/AlessandroAvi/MoneyTracker_telegramBot/blob/main/screenshots/001.jpg" width=30% height=30%> <img src="https://github.com/AlessandroAvi/MoneyTracker_telegramBot/blob/main/screenshots/002.jpg" width=30% height=30%>
 
