@@ -7,3 +7,6 @@
 
  <img src="https://github.com/AlessandroAvi/MoneyTracker_telegramBot/blob/main/screenshots/001.jpg" width=30% height=30%> <img src="https://github.com/AlessandroAvi/MoneyTracker_telegramBot/blob/main/screenshots/002.jpg" width=30% height=30%>
 
+  <img src="https://github.com/AlessandroAvi/MoneyTracker_telegramBot/blob/main/screenshots/003.jpg" width=30% height=30%> <img src="https://github.com/AlessandroAvi/MoneyTracker_telegramBot/blob/main/screenshots/004.jpg" width=30% height=30%>
+
+   <img src="https://github.com/AlessandroAvi/MoneyTracker_telegramBot/blob/main/screenshots/005.jpg" width=30% height=30%>
