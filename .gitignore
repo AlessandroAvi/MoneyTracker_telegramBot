@@ -154,3 +154,6 @@ cython_debug/
 
 # MY GIT IGNORE FILES
 api_key.py
+
+.csv
+.xlsx
