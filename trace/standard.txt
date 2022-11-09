@@ -152,3 +152,53 @@
 2022-08-28 12-10-55      New type inserted: expense - 0
 2022-08-28 12-11-17      New transaction have been initialized 
 2022-08-28 12-11-31      New type inserted: expense - 0
+2022-11-03 17-32-29      ** Bot started ** 
+2022-11-03 17-32-29      Polling wait time is: 0.5
+2022-11-09 18-14-51      ** Bot started ** 
+2022-11-09 18-14-51      Polling wait time is: 0.5
+2022-11-09 18-15-09      New transaction have been initialized 
+2022-11-09 18-15-13      New type inserted: expense - 0
+2022-11-09 18-15-21      New amount inserted manually: 
+2022-11-09 18-16-38      ** Bot started ** 
+2022-11-09 18-16-38      Polling wait time is: 0.5
+2022-11-09 18-16-46      New transaction have been initialized 
+2022-11-09 18-16-51      New type inserted: expense - 0
+2022-11-09 18-16-55      New amount inserted manually: 
+2022-11-09 18-17-02      New date inserted: 2022-11-09
+2022-11-09 18-17-05      New category inserted: Sport - 4
+2022-11-09 18-17-08      New method inserted: PayPal - 1
+2022-11-09 18-19-18      ** Bot started ** 
+2022-11-09 18-19-18      Polling wait time is: 0.5
+2022-11-09 18-19-27      New transaction have been initialized 
+2022-11-09 18-19-42      New type inserted: expense - 0
+2022-11-09 18-19-46      New amount inserted manually: 22
+2022-11-09 18-23-16      ** Bot started ** 
+2022-11-09 18-23-16      Polling wait time is: 0.5
+2022-11-09 18-23-20      New transaction have been initialized 
+2022-11-09 18-23-23      New type inserted: expense - 0
+2022-11-09 18-23-27      New amount inserted manually: 22
+2022-11-09 18-23-31      New amount inserted manually: 55
+2022-11-09 18-23-34      New method inserted: PP card - 2
+2022-11-09 18-23-39      New date inserted: 2022-11-09
+2022-11-09 18-23-42      New category inserted: Sport - 4
+2022-11-09 18-28-51      ** Bot started ** 
+2022-11-09 18-28-51      Polling wait time is: 0.5
+2022-11-09 18-28-59      New transaction have been initialized 
+2022-11-09 18-29-02      New type inserted: expense - 0
+2022-11-09 18-29-07      New amount inserted manually: 22
+2022-11-09 18-29-10      New date inserted: 2022-11-09
+2022-11-09 18-29-13      New category inserted: Sport - 4
+2022-11-09 18-29-18      New method inserted: Cash - 0
+2022-11-09 19-12-52      ** Bot started ** 
+2022-11-09 19-12-52      Polling wait time is: 0.5
+2022-11-09 19-13-03      New transaction have been initialized 
+2022-11-09 19-13-10      New type inserted: expense - 0
+2022-11-09 19-18-24      ** Bot started ** 
+2022-11-09 19-18-24      Polling wait time is: 0.5
+2022-11-09 19-18-28      New transaction have been initialized 
+2022-11-09 19-18-33      New type inserted: expense - 0
+2022-11-09 19-18-39      New date inserted: 2022-11-09
+2022-11-09 19-18-45      New amount inserted manually: 55
+2022-11-09 19-18-50      New category inserted: Rent - 0
+2022-11-09 19-18-55      New method inserted: CC card - 3
+2022-11-09 19-19-00      New note inserted: Ciao

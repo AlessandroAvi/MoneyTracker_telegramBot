@@ -6,8 +6,8 @@ txt_category    = "📚 Category"
 txt_method      = "💳 Method"
 txt_note        = "📝 Note"
 txt_complete    = "✅ Complete"
-txt_expense     = "Expense"
-txt_entry     = "Entry"
+txt_expense     = "📉 Expense"
+txt_entry       = "Entry 📈"
 
 
 

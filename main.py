@@ -1,16 +1,15 @@
 from inspect import trace
 from operator import truediv
-import tracemalloc
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import *
 from constants import *
-from api_key import API_KEY  # this file is not committed because it contains the private token for the bot
 from datetime import datetime
-from csvManager import *
 from traceManager import TraceManager
 
+import configparser # pip install configparse
+from pymongo import MongoClient
 
-
+DEV_MODE = 0
 
 # CLASS THAT CONTAINS ALL THE INFO ABOUT THE TRANSACTION
 class Transaction():
@@ -67,7 +66,7 @@ buttonsMenu = [[KeyboardButton(txt_date),
 
 # Function is called when user writes /start in chat
 def new_command(update, context):
-    traceManager.addLine("New transaction have been initialized \n")
+    #traceManager.addLine("New transaction have been initialized \n")
     trans.reset()
     button = [[KeyboardButton(txt_transaction)]]
     context.bot.send_message(chat_id=update.effective_chat.id, text= "Generate new transaction", 
@@ -76,6 +75,15 @@ def new_command(update, context):
 
 # Function is called when user activates a new transaction with the button
 def handle_message(update, context):
+
+    # NOTE 
+    if trans.NOTE_FLAG:      
+        trans.note = update.message.text
+        trans.NOTE_FLAG = False
+        print(trans.note)
+        #traceManager.addLine("New note inserted: " + trans.note + '\n')
+        context.bot.send_message(chat_id=update.effective_chat.id, text = "Select the field to fill", reply_markup=ReplyKeyboardMarkup(buttonsMenu))
+        return
 
     # EXPENSE / ENTRY BUTTON
     if txt_transaction in update.message.text:
@@ -88,11 +96,11 @@ def handle_message(update, context):
         if txt_expense in update.message.text:
             trans.type = 0
             trans.EXPENSE_FLAG = True
-            traceManager.addLine("New type inserted: expense - " + str(trans.type) + '\n')
+            #traceManager.addLine("New type inserted: expense - " + str(trans.type) + '\n')
         if txt_entry in update.message.text:
             trans.type = 1
             trans.ENTRY_FLAG = True
-            traceManager.addLine("New type inserted: entry - " + str(trans.type) + '\n')
+            #traceManager.addLine("New type inserted: entry - " + str(trans.type) + '\n')
 
         context.bot.send_message(chat_id=update.effective_chat.id, text = "Select the field to fill", reply_markup=ReplyKeyboardMarkup(buttonsMenu))
 
@@ -108,18 +116,10 @@ def handle_message(update, context):
     if txt_amount in update.message.text:
         trans.AMOUNT_FLAG = True
         buttons = [
-                    [KeyboardButton("1",    callback_data = "1"),
-                     KeyboardButton("2",    callback_data = "2"),
-                     KeyboardButton("3",    callback_data = "3")],
-                    [KeyboardButton("4",    callback_data = "4"),
-                     KeyboardButton("5",    callback_data = "5"),
-                     KeyboardButton("6",    callback_data = "6")],
-                    [KeyboardButton("7",    callback_data = "7"),
-                     KeyboardButton("8",    callback_data = "8"),
-                     KeyboardButton("9",    callback_data = "9")],
-                    [KeyboardButton(".",    callback_data = "."),
-                     KeyboardButton("0",    callback_data = "0"),
-                     KeyboardButton("OK",   callback_data = "OK")]]
+                    [KeyboardButton("1",    callback_data = "1"),KeyboardButton("2",    callback_data = "2"),KeyboardButton("3",    callback_data = "3")],
+                    [KeyboardButton("4",    callback_data = "4"),KeyboardButton("5",    callback_data = "5"),KeyboardButton("6",    callback_data = "6")],
+                    [KeyboardButton("7",    callback_data = "7"),KeyboardButton("8",    callback_data = "8"),KeyboardButton("9",    callback_data = "9")],
+                    [KeyboardButton(".",    callback_data = "."),KeyboardButton("0",    callback_data = "0"),KeyboardButton("OK",   callback_data = "OK")]]
         update.message.reply_text("Insert amount of money:", reply_markup=ReplyKeyboardMarkup(buttons))
 
     # CATEGORY
@@ -152,19 +152,17 @@ def handle_message(update, context):
     # TERMINATE
     if txt_complete in update.message.text:
         update.message.reply_text("Terminating transaction...")
-
+        addItemToDB()
         print_transInfo(update, context)
-
-        csvManager.addLineCSV(update, traceManager, trans)
 
     # PARSE AMOUNT
     if trans.AMOUNT_FLAG:  
-        if 'K' in update.message.text:
+        if 'OK' in update.message.text:
             trans.AMOUNT_FLAG = False  
             trans.amount = trans.amountTemp
-            print(trans.amountTemp)
+            print("amount temp " + trans.amountTemp + " - amount  "+ trans.amount)
             trans.amountTemp = ""
-            traceManager.addLine("New amount inserted manually: " + trans.amountTemp + '\n')  
+            #traceManager.addLine("New amount inserted manually: " + trans.amount + '\n')  
             context.bot.send_message(chat_id=update.effective_chat.id, text = "Amount received", reply_markup=ReplyKeyboardRemove(remove_keyboard=True))
             context.bot.send_message(chat_id=update.effective_chat.id, text = "Select the field to fill", reply_markup=ReplyKeyboardMarkup(buttonsMenu))
             return
@@ -187,16 +185,18 @@ def queryReceivedHandler(update, context):
             now = datetime.now()
             trans.time = now.strftime("%Y-%m-%d")
             trans.TIME_FLAG = False
+            context.bot.send_message(chat_id=update.effective_chat.id, text = "Time received")
             print(trans.time)
-            traceManager.addLine("New date inserted: " + trans.time + '\n')
+            #traceManager.addLine("New date inserted: " + trans.time + '\n')
             return
         
         if 'insert_time' in query:
             update.message.reply_text("Insert the date")
             trans.time = now.strftime("%Y-%m-%d")
             trans.TIME_FLAG = False
+            context.bot.send_message(chat_id=update.effective_chat.id, text = "Time received")
             print(trans.time)
-            traceManager.addLine("New date inserted manually: " + trans.time + '\n')
+            #traceManager.addLine("New date inserted manually: " + trans.time + '\n')
             return
 
     if trans.CATEGORY_FLAG:
@@ -207,7 +207,8 @@ def queryReceivedHandler(update, context):
                 trans.CATEGORY_FLAG = False
                 debug = trans.category_ary[trans.category] + " - " +  str(trans.category)
                 print(debug)
-                traceManager.addLine("New category inserted: " + debug + '\n')
+                context.bot.send_message(chat_id=update.effective_chat.id, text = "Category received")
+                #traceManager.addLine("New category inserted: " + debug + '\n')
                 return
             cnt = cnt+1
 
@@ -219,22 +220,16 @@ def queryReceivedHandler(update, context):
                 trans.METHOD_FLAG = False
                 debug = trans.methods_ary[trans.method] + " - " + str(trans.method)
                 print(debug)
-                traceManager.addLine("New method inserted: " + debug + '\n')
+                context.bot.send_message(chat_id=update.effective_chat.id, text = "Method received")
+               #traceManager.addLine("New method inserted: " + debug + '\n')
                 return
             cnt = cnt+1
-
-    if trans.NOTE_FLAG:      
-        trans.note = query
-        trans.NOTE_FLAG = False
-        print(trans.note)
-        traceManager.addLine("New note inserted: " + trans.note + '\n')
-        return
 
     return "No callbacks found"
 
 
 def print_transInfo(update, context):
-    update.message.reply_text("The transaction collected data is:\n  Date:"+ trans.time +"\n  Amount: "+ trans.amountTemp +"\n  Category: "+str(trans.category_ary[trans.category])+"\n  Method: "+str(trans.methods_ary[trans.method])+"\n  Notes: "+str(trans.note))
+    update.message.reply_text("The transaction collected data is:\n  Date:"+ trans.time +"\n  Amount: "+ trans.amount +"\n  Type: "+ str(trans.type) +"\n  Category: "+str(trans.category_ary[trans.category])+"\n  Method: "+str(trans.methods_ary[trans.method])+"\n  Notes: "+str(trans.note))
     print("print info msg")
 
 
@@ -242,9 +237,13 @@ def error(update, context):
     print(f"Update: {update} caused error {context.error}")
 
 
+def addItemToDB():
+    item = {"date": trans.time, "amount":trans.amount,  
+            "type":trans.type, "method":trans.methods_ary[trans.method], 
+            "cat":trans.category_ary[trans.category], "note":trans.note}
 
-
-
+    products.insert_one(item)
+    return
 
 
 
@@ -256,34 +255,50 @@ def error(update, context):
 #      |_|  |_/_/   \_\___|_| \_|
                            
 
+# MONGO DATABASE
+print('Initializing configurations')
+config = configparser.ConfigParser()
+config.read('config.ini')
 
-def main():
+BOT_TOKEN = config.get('default','bot_token')
 
-    pollingWaitTime = 0.5
+# READ VALUES FOR DB
+USERNAME = config.get('default','username')
+PASSWORD = config.get('default','password') 
+DATABASE_NAME = config.get('default','db_name')
+COLLECTION_NAME = config.get('default','collection_name')
 
-    traceManager.addLine("** Bot started ** \n")
-    traceManager.addLine("Polling wait time is: " + str(pollingWaitTime) + '\n')
+url = "mongodb+srv://"+USERNAME+":"+PASSWORD+"@clusterbot.gxgqhc5.mongodb.net/?retryWrites=true&w=majority"
+cluster = MongoClient(url)
 
-
-    updater = Updater(API_KEY, use_context=True)
-    dp = updater.dispatcher
-
-    dp.add_handler(CommandHandler("start", new_command))
-
-    dp.add_handler(MessageHandler(Filters.text, handle_message))
-
-    dp.add_handler(CallbackQueryHandler(queryReceivedHandler))
-
-    dp.add_error_handler(error)
-
-    updater.start_polling(pollingWaitTime)
-    updater.idle()
+print('Init database')
+db = cluster[DATABASE_NAME]
+products = db[COLLECTION_NAME]
 
 
 
-
+# TELEGRAM BOT
 print('**Bot started')
-trans        = Transaction()
-traceManager = TraceManager()
-csvManager   = CSVManager()
-main()
+
+trans = Transaction()
+
+#traceManager = TraceManager()
+
+pollingWaitTime = 0.5
+
+#    traceManager.addLine("** Bot started ** \n")
+#    traceManager.addLine("Polling wait time is: " + str(pollingWaitTime) + '\n')
+
+updater = Updater(BOT_TOKEN, use_context=True)
+dp = updater.dispatcher
+
+dp.add_handler(CommandHandler("s", new_command))
+
+dp.add_handler(MessageHandler(Filters.text, handle_message))
+
+dp.add_handler(CallbackQueryHandler(queryReceivedHandler))
+
+dp.add_error_handler(error)
+
+updater.start_polling(pollingWaitTime)
+updater.idle()
