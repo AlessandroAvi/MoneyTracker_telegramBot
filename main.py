@@ -23,6 +23,7 @@ class Transaction():
     note       = ""
 
     category_ary = ['Rent','Groceries', 'Living', 'Transport', 'Sport', 'Living']
+    type_ary     = ['Expense','Entry']
     methods_ary  = ['Cash', 'PayPal', 'PP card', 'CC card']
     digits_ary   = ['0','1','2','3','4','5','6','7','8','9','.']
     digit_end    = 'K'
@@ -229,7 +230,7 @@ def queryReceivedHandler(update, context):
 
 
 def print_transInfo(update, context):
-    update.message.reply_text("The transaction collected data is:\n  Date:"+ trans.time +"\n  Amount: "+ trans.amount +"\n  Type: "+ str(trans.type) +"\n  Category: "+str(trans.category_ary[trans.category])+"\n  Method: "+str(trans.methods_ary[trans.method])+"\n  Notes: "+str(trans.note))
+    update.message.reply_text("The transaction collected data is:\n  Date:"+ trans.time +"\n  Amount: "+ trans.amount +"\n  Type: "+ trans.type_ary[trans.type] +"\n  Category: "+str(trans.category_ary[trans.category])+"\n  Method: "+str(trans.methods_ary[trans.method])+"\n  Notes: "+str(trans.note))
     print("print info msg")
 
 
@@ -238,9 +239,9 @@ def error(update, context):
 
 
 def addItemToDB():
-    item = {"date": trans.time, "amount":trans.amount,  
-            "type":trans.type, "method":trans.methods_ary[trans.method], 
-            "cat":trans.category_ary[trans.category], "note":trans.note}
+    item = {"date": trans.time, "amount": float(trans.amount),  
+            "type":trans.type, "method":trans.method, 
+            "cat":trans.category, "note":trans.note}
 
     products.insert_one(item)
     return
