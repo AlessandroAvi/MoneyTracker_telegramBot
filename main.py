@@ -32,6 +32,7 @@ class Transaction():
     ENTRY_FLAG    = False
     EXPENSE_FLAG  = False
     TIME_FLAG     = False
+    TIME_FLAG2    = False
     METHOD_FLAG   = False
     CATEGORY_FLAG = False
     NOTE_FLAG     = False
@@ -82,6 +83,15 @@ def handle_message(update, context):
         trans.note = update.message.text
         trans.NOTE_FLAG = False
         print(trans.note)
+        #traceManager.addLine("New note inserted: " + trans.note + '\n')
+        context.bot.send_message(chat_id=update.effective_chat.id, text = "Select the field to fill", reply_markup=ReplyKeyboardMarkup(buttonsMenu))
+        return
+
+    # DATE 
+    if trans.TIME_FLAG2:      
+        trans.time = update.message.text
+        trans.TIME_FLAG2 = False
+        print(trans.time)
         #traceManager.addLine("New note inserted: " + trans.note + '\n')
         context.bot.send_message(chat_id=update.effective_chat.id, text = "Select the field to fill", reply_markup=ReplyKeyboardMarkup(buttonsMenu))
         return
@@ -192,12 +202,9 @@ def queryReceivedHandler(update, context):
             return
         
         if 'insert_time' in query:
-            update.message.reply_text("Insert the date")
-            trans.time = now.strftime("%Y-%m-%d")
+            context.bot.send_message(chat_id=update.effective_chat.id, text = "Plase insert date in format yyyy-mm-dd")
             trans.TIME_FLAG = False
-            context.bot.send_message(chat_id=update.effective_chat.id, text = "Time received")
-            print(trans.time)
-            #traceManager.addLine("New date inserted manually: " + trans.time + '\n')
+            trans.TIME_FLAG2 = True
             return
 
     if trans.CATEGORY_FLAG:
