@@ -29,14 +29,15 @@ class Transaction():
     digit_end    = 'K'
 
     # FLAGS
-    ENTRY_FLAG    = False
-    EXPENSE_FLAG  = False
-    TIME_FLAG     = False
-    TIME_FLAG2    = False
-    METHOD_FLAG   = False
-    CATEGORY_FLAG = False
-    NOTE_FLAG     = False
-    AMOUNT_FLAG   = False
+    ENTRY_FLAG     = False
+    EXPENSE_FLAG   = False
+    TIME_FLAG      = False
+    TIME_FLAG2     = False
+    METHOD_FLAG    = False
+    CATEGORY_FLAG  = False
+    NOTE_FLAG      = False
+    AMOUNT_FLAG    = False
+    TERMINATE_FLAG = False
 
 
     def reset(self):
@@ -47,13 +48,15 @@ class Transaction():
         method     = 0
         category   = 0
         note       = ""
-        PAYMENT_FLAG  = False
-        EXPENSE_FLAG  = False
-        TIME_FLAG     = False
-        METHOD_FLAG   = False
-        CATEGORY_FLAG = False
-        NOTE_FLAG     = False
-        AMOUNT_FLAG   = False
+        PAYMENT_FLAG   = False
+        EXPENSE_FLAG   = False
+        TIME_FLAG      = False
+        TIME_FLAG2     = False
+        METHOD_FLAG    = False
+        CATEGORY_FLAG  = False
+        NOTE_FLAG      = False
+        AMOUNT_FLAG    = False
+        TERMINATE_FLAG = False
 
 
 
@@ -71,9 +74,7 @@ def new_command(update, context):
     #traceManager.addLine("New transaction have been initialized \n")
     trans.reset()
     button = [[KeyboardButton(txt_transaction)]]
-    context.bot.send_message(chat_id=update.effective_chat.id, text= "Generate new transaction", 
-                             reply_markup=ReplyKeyboardMarkup(button, resize_keyboard=True, one_time_keyboard=True))
-
+    context.bot.send_message(chat_id=update.effective_chat.id, text= "Generate new transaction", reply_markup=ReplyKeyboardMarkup(button, resize_keyboard=True, one_time_keyboard=True))
 
 # Function is called when user activates a new transaction with the button
 def handle_message(update, context):
@@ -162,9 +163,10 @@ def handle_message(update, context):
 
     # TERMINATE
     if txt_complete in update.message.text:
-        update.message.reply_text("Terminating transaction...")
-        addItemToDB()
         print_transInfo(update, context)
+        trans.TERMINATE_FLAG = True
+        buttons = [[InlineKeyboardButton("💾 Save and restart", callback_data="save")], [InlineKeyboardButton("🔁 Restart", callback_data="restart")]]
+        update.message.reply_text("Confirm", reply_markup=InlineKeyboardMarkup(buttons))
 
     # PARSE AMOUNT
     if trans.AMOUNT_FLAG:  
@@ -233,11 +235,30 @@ def queryReceivedHandler(update, context):
                 return
             cnt = cnt+1
 
+    if trans.TERMINATE_FLAG:
+        if 'save' in query:
+            addItemToDB()
+            trans.TERMINATE_FLAG = False
+            context.bot.send_message(chat_id=update.effective_chat.id, text = "Terminating transaction...")
+            new_command(update, context)
+            return
+        
+        if 'restart' in query:
+            trans.TERMINATE_FLAG = False
+            context.bot.send_message(chat_id=update.effective_chat.id, text = "Resetting transaction...")
+            new_command(update, context)
+            return
+
     return "No callbacks found"
 
 
 def print_transInfo(update, context):
-    update.message.reply_text("The transaction collected data is:\n  Date:"+ trans.time +"\n  Amount: "+ trans.amount +"\n  Type: "+ trans.type_ary[trans.type] +"\n  Category: "+str(trans.category_ary[trans.category])+"\n  Method: "+str(trans.methods_ary[trans.method])+"\n  Notes: "+str(trans.note))
+    update.message.reply_text("The transaction collected data is:\n  Date:     "+ trans.time +
+                                                                "\n  Amount:   "+ trans.amount +
+                                                                "\n  Type:     "+ trans.type_ary[trans.type] +
+                                                                "\n  Category: "+str(trans.category_ary[trans.category])+
+                                                                "\n  Method:   "+str(trans.methods_ary[trans.method])+
+                                                                "\n  Notes:    "+str(trans.note))
     print("print info msg")
 
 
